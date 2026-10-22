@@ -218,6 +218,17 @@ svg.map { width: 100%; height: auto; display: block; max-height: 80vh; }
 @media (max-width: 560px) { .pend { grid-template-columns: minmax(0, 1fr) auto; } .pend .nm { grid-column: 1 / -1; } }
 .cols2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
 .brand .from { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+/* 彩蛋：台灣 */
+.tw { fill: var(--land); stroke: var(--land-edge); stroke-width: 0.8; opacity: .6; cursor: pointer; transition: opacity .2s, fill .2s; }
+.tw:hover, .tw:focus-visible { opacity: 1; fill: var(--g2); outline: none; }
+.egg { position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%); z-index: 6; width: min(360px, calc(100% - 32px)); background: var(--paper); border: 1px solid var(--sage); border-radius: 14px; padding: 20px 20px 18px; display: flex; flex-direction: column; gap: 10px; text-align: center; box-shadow: 0 10px 30px rgba(30, 35, 25, .18); }
+.egg h3 { margin: 0; font-family: var(--font-display); font-size: 22px; color: var(--sage); }
+.egg p { margin: 0; font-size: 15px; line-height: 1.7; text-wrap: balance; }
+.egg .btn { align-self: center; text-decoration: none; }
+.egg-x { position: absolute; right: 8px; top: 6px; border: 0; background: none; font-size: 20px; line-height: 1; color: var(--muted); cursor: pointer; padding: 6px; }
+.egg-x:focus-visible, .egg .btn:focus-visible { outline: 2px solid var(--warm); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) { .egg:not([hidden]) { animation: eggIn .28s ease-out; } }
+@keyframes eggIn { from { opacity: 0; transform: translate(-50%, -44%) scale(.96); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
 </style>
 
 
@@ -339,6 +350,12 @@ svg.map { width: 100%; height: auto; display: block; max-height: 80vh; }
       <p class="map3d-hint" id="map3d-hint" hidden>拖曳移動・滾輪或雙指縮放・雙擊放大・右鍵或 Shift＋拖曳旋轉・點縣市飛過去</p>
       <svg class="map" id="map" viewBox="10 15 1020 1135" role="img" aria-label="日本各縣和牛品牌分布"></svg>
       <div class="legend" id="legend"></div>
+      <div class="egg" id="egg" role="dialog" aria-labelledby="egg-title" hidden>
+        <button type="button" class="egg-x" id="egg-close" aria-label="關閉">×</button>
+        <h3 id="egg-title">你發現台灣了！！</h3>
+        <p>在台灣買和牛我都去「食安集品」找傑哥買</p>
+        <a class="btn primary" href="https://twjipin.com/shop/40500/" target="_blank" rel="noopener">前往食安集品</a>
+      </div>
     </section>
 
     <section class="panel">
@@ -593,7 +610,24 @@ Object.entries(PATHS).forEach(([id,d]) => {
   prefEls[id] = p; gp.append(p);
 });
 svg.append(gp);
+// ── 彩蛋：日本左下方的小台灣，點了會跳出卡片 ──
+const TW_PATH = "M225.2,1069.4L223.7,1072.9L222.5,1076.6L222.0,1080.2L222.1,1083.8L221.7,1087.1L221.1,1090.3L218.8,1089.3L217.4,1087.1L217.2,1083.3L215.4,1078.7L214.8,1077.3L212.4,1074.8L210.1,1073.5L208.4,1071.6L208.6,1071.7L207.3,1069.2L206.3,1066.5L204.3,1058.8L203.6,1056.9L202.8,1055.2L202.5,1053.5L202.8,1051.6L203.6,1048.9L204.2,1046.1L203.7,1042.2L203.9,1038.4L204.6,1036.7L216.0,1013.7L219.1,1008.8L221.0,1006.3L222.6,1003.6L224.1,1000.2L226.0,997.1L227.3,996.1L233.9,993.3L235.9,990.5L237.5,989.7L239.4,989.8L240.6,991.1L241.6,992.6L242.8,993.4L245.7,994.9L247.0,996.3L247.5,998.8L245.8,1001.2L244.9,1003.3L244.7,1005.7L245.1,1008.8L245.1,1012.0L242.9,1019.5L240.5,1024.1L239.9,1026.4L239.1,1032.2L237.7,1038.0L236.6,1045.3L234.7,1052.8L233.5,1056.0L232.1,1059.0L228.9,1064.7L225.2,1069.4Z";
+const twEl = el("path", { d: TW_PATH, class: "tw", tabindex: "0", role: "button", "aria-label": "台灣" });
+twEl.addEventListener("click", () => openEgg());
+twEl.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEgg(); } });
+svg.append(twEl);
 const gl = el("g"); svg.append(gl);
+const egg = document.getElementById("egg");
+let eggReturn = null;
+function openEgg(){
+  eggReturn = document.activeElement;
+  egg.hidden = false;
+  document.getElementById("egg-close").focus({ preventScroll: true });
+}
+function closeEgg(){ if (egg.hidden) return; egg.hidden = true; if (eggReturn && eggReturn.focus) eggReturn.focus({ preventScroll: true }); }
+document.getElementById("egg-close").onclick = closeEgg;
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeEgg(); });
+document.addEventListener("pointerdown", e => { if (!egg.hidden && !egg.contains(e.target) && !e.target.closest(".tw") && !e.target.closest("#map3d canvas")) closeEgg(); });
 
 function levelEaten(c){ return c>=4?4 : c>=3?3 : c; }
 function levelAll(c){ return c>=10?4 : c>=5?3 : c>=3?2 : 1; }
@@ -1053,7 +1087,7 @@ syncClearButtons(); renderHeader(); paintMap(); renderToolbar(); render();
   const X0 = 520, Y0 = 580, S = 0.1, DEPTH = 1.4;
   let scene, camera, controls, group, meshes = {}, outlines = [], raycaster, pointer;
   const lifted = new Set(), wideSet = new Set();
-  let hoverId = null, needsRender = true, fitted = false;
+  let hoverId = null, needsRender = true, fitted = false, twMesh = null;
 
   function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim() || "#cccccc"; }
 
@@ -1105,6 +1139,15 @@ syncClearButtons(); renderHeader(); paintMap(); renderToolbar(); render();
         mesh.add(line); outlines.push(line);
       });
     });
+
+    // 彩蛋：台灣（不算進取景與移動範圍）
+    {
+      const rings = parsePath(TW_PATH);
+      const geo = new THREE.ExtrudeGeometry(rings.map(r => new THREE.Shape(r)), { depth: DEPTH, bevelEnabled: false, curveSegments: 1 });
+      twMesh = new THREE.Mesh(geo, [new THREE.MeshLambertMaterial({ color: 0xcccccc, transparent: true, opacity: 0.6 }), new THREE.MeshBasicMaterial({ color: 0xaaaaaa, transparent: true, opacity: 0.6 })]);
+      twMesh.userData.id = "tw";
+      group.add(twMesh);
+    }
 
     // 沖繩縮圖框
     const r = [[70,272],[510,272],[510,534],[70,534]].map(([x,y]) => new THREE.Vector3((x - X0) * S, -(y - Y0) * S, 0.05));
@@ -1272,6 +1315,11 @@ syncClearButtons(); renderHeader(); paintMap(); renderToolbar(); render();
       m.children.forEach(l => { l.material.color.copy(on || wideSet.has(id) ? warm : edge); });
     });
     outlines.filter(o => !o.userData.id).forEach(o => o.material.color.copy(edge));
+    if (twMesh) {
+      const tc = new THREE.Color(cssVar(hoverId === "tw" ? "--g2" : "--land"));
+      twMesh.material[0].color.copy(tc); twMesh.material[1].color.copy(tc).multiplyScalar(0.74);
+      twMesh.material.forEach(mt => { mt.opacity = hoverId === "tw" ? 1 : 0.6; });
+    }
     needsRender = true;
     placeBadges();
   }
@@ -1353,7 +1401,7 @@ syncClearButtons(); renderHeader(); paintMap(); renderToolbar(); render();
     pointer.x = ((ev.clientX - r.left) / r.width) * 2 - 1;
     pointer.y = -((ev.clientY - r.top) / r.height) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
-    const hit = raycaster.intersectObjects(Object.values(meshes), false)[0];
+    const hit = raycaster.intersectObjects(Object.values(meshes).concat(twMesh ? [twMesh] : []), false)[0];
     return hit ? hit.object.userData.id : null;
   }
   function bindPointer(){
@@ -1368,6 +1416,7 @@ syncClearButtons(); renderHeader(); paintMap(); renderToolbar(); render();
       const id = pick(e);
       clearTimeout(clickTimer);
       // 等一下確認不是雙擊，再執行單擊（篩選＋飛過去）
+      if (id === "tw") { clearTimeout(clickTimer); openEgg(); return; }
       clickTimer = setTimeout(() => { if (id && (eatenCount[id] || (mode === "all" && allCount[id]))) focusPref(id); }, 260);
     });
     el.addEventListener("dblclick", e => { e.preventDefault(); clearTimeout(clickTimer); hideFirstHint(); zoomAt(e.clientX, e.clientY, 0.5, true); });
@@ -1376,9 +1425,9 @@ syncClearButtons(); renderHeader(); paintMap(); renderToolbar(); render();
       if (e.buttons) { tip.hidden = true; return; }
       const id = pick(e);
       if (id !== hoverId) { hoverId = id; recolor(); }
-      const has = id && (eatenCount[id] || (mode === "all" && allCount[id]));
+      const has = id === "tw" || (id && (eatenCount[id] || (mode === "all" && allCount[id])));
       el.style.cursor = has ? "pointer" : "grab";
-      if (id) {
+      if (id && id !== "tw") {
         const r = box.getBoundingClientRect();
         tip.textContent = `${PN[id]}：品牌 ${allCount[id] || 0} 個，吃過 ${eatenCount[id] || 0} 個`;
         tip.style.transform = `translate(${e.clientX - r.left + 12}px, ${e.clientY - r.top + 12}px)`;
