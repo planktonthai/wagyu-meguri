@@ -79,7 +79,7 @@ h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 
 @media (max-width: 860px) { .main { grid-template-columns: minmax(0, 1fr); } }
 
 .map-card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 14px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 14px); }
-@media (max-width: 860px) { .map-card { position: static; } }
+@media (max-width: 860px) { .map-card { position: relative; top: auto; } }
 svg.map { width: 100%; height: auto; display: block; max-height: 80vh; }
 .pref { fill: var(--land); stroke: var(--land-edge); stroke-width: 0.8; stroke-linejoin: round; transition: fill .2s; }
 .pref.c1 { fill: var(--g1); } .pref.c2 { fill: var(--g2); } .pref.c3 { fill: var(--g3); } .pref.c4 { fill: var(--g4); }
@@ -218,10 +218,13 @@ svg.map { width: 100%; height: auto; display: block; max-height: 80vh; }
 @media (max-width: 560px) { .pend { grid-template-columns: minmax(0, 1fr) auto; } .pend .nm { grid-column: 1 / -1; } }
 .cols2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
 .brand .from { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
-/* 彩蛋：台灣 */
-.tw { fill: var(--land); stroke: var(--land-edge); stroke-width: 0.8; opacity: .6; cursor: pointer; transition: opacity .2s, fill .2s; }
-.tw:hover, .tw:focus-visible { opacity: 1; fill: var(--g2); outline: none; }
-.egg { position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%); z-index: 6; width: min(360px, calc(100% - 32px)); background: var(--paper); border: 1px solid var(--sage); border-radius: 14px; padding: 20px 20px 18px; display: flex; flex-direction: column; gap: 10px; text-align: center; box-shadow: 0 10px 30px rgba(30, 35, 25, .18); }
+/* 彩蛋：台灣（淡黃色） */
+:root { --tw: #f2e3a6; --tw-hover: #e8cd6f; --tw-edge: #d8c27c; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --tw: #6e6233; --tw-hover: #9a8742; --tw-edge: #85773f; } }
+:root[data-theme="dark"] { --tw: #6e6233; --tw-hover: #9a8742; --tw-edge: #85773f; }
+.tw { fill: var(--tw); stroke: var(--tw-edge); stroke-width: 0.8; cursor: pointer; transition: fill .2s; }
+.tw:hover, .tw:focus-visible { fill: var(--tw-hover); outline: none; }
+.egg { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 6; width: min(360px, calc(100% - 32px)); background: var(--paper); border: 1px solid var(--sage); border-radius: 14px; padding: 20px 20px 18px; display: flex; flex-direction: column; gap: 10px; text-align: center; box-shadow: 0 10px 30px rgba(30, 35, 25, .18); }
 .egg h3 { margin: 0; font-family: var(--font-display); font-size: 22px; color: var(--sage); }
 .egg p { margin: 0; font-size: 15px; line-height: 1.7; text-wrap: balance; }
 .egg .btn { align-self: center; text-decoration: none; }
@@ -348,7 +351,7 @@ svg.map { width: 100%; height: auto; display: block; max-height: 80vh; }
       </div>
       <div class="map3d" id="map3d"><div class="map3d-overlay" id="map3d-overlay"></div><button type="button" class="compass" id="compass" aria-label="轉回正北" title="轉回正北"><span class="needle"><i></i><b>N</b></span></button><div class="map3d-tip" id="map3d-tip" hidden></div></div>
       <p class="map3d-hint" id="map3d-hint" hidden>拖曳移動・滾輪或雙指縮放・雙擊放大・右鍵或 Shift＋拖曳旋轉・點縣市飛過去</p>
-      <svg class="map" id="map" viewBox="10 15 1020 1135" role="img" aria-label="日本各縣和牛品牌分布"></svg>
+      <svg class="map" id="map" viewBox="-85 15 1115 1265" role="img" aria-label="日本各縣和牛品牌分布"></svg>
       <div class="legend" id="legend"></div>
       <div class="egg" id="egg" role="dialog" aria-labelledby="egg-title" hidden>
         <button type="button" class="egg-x" id="egg-close" aria-label="關閉">×</button>
@@ -611,7 +614,7 @@ Object.entries(PATHS).forEach(([id,d]) => {
 });
 svg.append(gp);
 // ── 彩蛋：日本左下方的小台灣，點了會跳出卡片 ──
-const TW_PATH = "M225.2,1069.4L223.7,1072.9L222.5,1076.6L222.0,1080.2L222.1,1083.8L221.7,1087.1L221.1,1090.3L218.8,1089.3L217.4,1087.1L217.2,1083.3L215.4,1078.7L214.8,1077.3L212.4,1074.8L210.1,1073.5L208.4,1071.6L208.6,1071.7L207.3,1069.2L206.3,1066.5L204.3,1058.8L203.6,1056.9L202.8,1055.2L202.5,1053.5L202.8,1051.6L203.6,1048.9L204.2,1046.1L203.7,1042.2L203.9,1038.4L204.6,1036.7L216.0,1013.7L219.1,1008.8L221.0,1006.3L222.6,1003.6L224.1,1000.2L226.0,997.1L227.3,996.1L233.9,993.3L235.9,990.5L237.5,989.7L239.4,989.8L240.6,991.1L241.6,992.6L242.8,993.4L245.7,994.9L247.0,996.3L247.5,998.8L245.8,1001.2L244.9,1003.3L244.7,1005.7L245.1,1008.8L245.1,1012.0L242.9,1019.5L240.5,1024.1L239.9,1026.4L239.1,1032.2L237.7,1038.0L236.6,1045.3L234.7,1052.8L233.5,1056.0L232.1,1059.0L228.9,1064.7L225.2,1069.4Z";
+const TW_PATH = "M-52.4,1239.7L-53.8,1242.8L-54.9,1246.2L-55.3,1249.4L-55.3,1252.6L-55.6,1255.5L-56.1,1258.4L-58.2,1257.6L-59.4,1255.5L-59.7,1252.1L-61.2,1248.0L-61.8,1246.8L-64.0,1244.5L-66.0,1243.3L-67.6,1241.6L-67.4,1241.8L-68.5,1239.5L-69.4,1237.0L-71.2,1230.1L-71.8,1228.4L-72.6,1226.9L-72.9,1225.4L-72.6,1223.7L-71.8,1221.2L-71.4,1218.7L-71.8,1215.2L-71.6,1211.8L-71.0,1210.3L-60.8,1189.5L-57.9,1185.1L-56.2,1182.9L-54.8,1180.5L-53.4,1177.4L-51.7,1174.5L-50.5,1173.7L-44.6,1171.1L-42.8,1168.7L-41.3,1167.9L-39.7,1168.0L-38.6,1169.2L-37.6,1170.5L-36.6,1171.3L-34.0,1172.6L-32.8,1173.9L-32.4,1176.1L-33.9,1178.2L-34.7,1180.2L-34.9,1182.3L-34.6,1185.1L-34.6,1188.0L-36.5,1194.7L-38.7,1198.9L-39.2,1201.0L-39.9,1206.2L-41.2,1211.4L-42.2,1217.9L-43.9,1224.7L-45.0,1227.6L-46.2,1230.3L-49.1,1235.4L-52.4,1239.7Z";
 const twEl = el("path", { d: TW_PATH, class: "tw", tabindex: "0", role: "button", "aria-label": "台灣" });
 twEl.addEventListener("click", () => openEgg());
 twEl.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEgg(); } });
@@ -623,6 +626,9 @@ function openEgg(){
   eggReturn = document.activeElement;
   egg.hidden = false;
   document.getElementById("egg-close").focus({ preventScroll: true });
+  // 彈窗固定蓋在地圖中央；地圖不在畫面內時捲過去
+  const r = egg.getBoundingClientRect();
+  if (r.top < 0 || r.bottom > innerHeight) egg.scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 }
 function closeEgg(){ if (egg.hidden) return; egg.hidden = true; if (eggReturn && eggReturn.focus) eggReturn.focus({ preventScroll: true }); }
 document.getElementById("egg-close").onclick = closeEgg;
@@ -1140,11 +1146,13 @@ syncClearButtons(); renderHeader(); paintMap(); renderToolbar(); render();
       });
     });
 
-    // 彩蛋：台灣（不算進取景與移動範圍）
+    // 彩蛋：台灣（在九州西南方，依真實方位擺放）
     {
       const rings = parsePath(TW_PATH);
       const geo = new THREE.ExtrudeGeometry(rings.map(r => new THREE.Shape(r)), { depth: DEPTH, bevelEnabled: false, curveSegments: 1 });
-      twMesh = new THREE.Mesh(geo, [new THREE.MeshLambertMaterial({ color: 0xcccccc, transparent: true, opacity: 0.6 }), new THREE.MeshBasicMaterial({ color: 0xaaaaaa, transparent: true, opacity: 0.6 })]);
+      twMesh = new THREE.Mesh(geo, [new THREE.MeshLambertMaterial({ color: 0xf2e3a6 }), new THREE.MeshBasicMaterial({ color: 0xd8c27c })]);
+      const tb = new THREE.Box2().setFromPoints(rings[0]);
+      twMesh.userData.main = [[tb.min.x, tb.min.y], [tb.max.x, tb.min.y], [tb.min.x, tb.max.y], [tb.max.x, tb.max.y]];
       twMesh.userData.id = "tw";
       group.add(twMesh);
     }
@@ -1190,6 +1198,7 @@ syncClearButtons(); renderHeader(); paintMap(); renderToolbar(); render();
   function collectFitPoints(){
     group.updateMatrixWorld(true);
     fitPts = []; Object.values(meshes).forEach(m => fitPts.push(...meshCorners(m)));
+    if (twMesh) fitPts.push(...meshCorners(twMesh));
     const bb = new THREE.Box3().setFromPoints(fitPts);
     const pad = bb.getSize(new THREE.Vector3()).multiplyScalar(0.06);
     bounds = { x0: bb.min.x - pad.x, x1: bb.max.x + pad.x, z0: bb.min.z - pad.z, z1: bb.max.z + pad.z };
@@ -1269,7 +1278,10 @@ syncClearButtons(); renderHeader(); paintMap(); renderToolbar(); render();
   let landPts = null;
   function clampTarget(){
     if (!bounds) return;
-    if (!landPts) { landPts = Object.entries(CENTER).filter(([id]) => meshes[id]).map(([id, [x, y]]) => { const v = new THREE.Vector3((x - X0) * S, -(y - Y0) * S, DEPTH); group.localToWorld(v); return v; }); }
+    if (!landPts) {
+      landPts = Object.entries(CENTER).filter(([id]) => meshes[id]).map(([id, [x, y]]) => { const v = new THREE.Vector3((x - X0) * S, -(y - Y0) * S, DEPTH); group.localToWorld(v); return v; });
+      if (twMesh) { const c = new THREE.Box3().setFromObject(twMesh).getCenter(new THREE.Vector3()); landPts.push(c); }
+    }
     const t = controls.target;
     let cx = Math.min(bounds.x1, Math.max(bounds.x0, t.x)), cz = Math.min(bounds.z1, Math.max(bounds.z0, t.z));
     const dist = camera.position.distanceTo(t);
@@ -1316,9 +1328,8 @@ syncClearButtons(); renderHeader(); paintMap(); renderToolbar(); render();
     });
     outlines.filter(o => !o.userData.id).forEach(o => o.material.color.copy(edge));
     if (twMesh) {
-      const tc = new THREE.Color(cssVar(hoverId === "tw" ? "--g2" : "--land"));
-      twMesh.material[0].color.copy(tc); twMesh.material[1].color.copy(tc).multiplyScalar(0.74);
-      twMesh.material.forEach(mt => { mt.opacity = hoverId === "tw" ? 1 : 0.6; });
+      const tc = new THREE.Color(cssVar(hoverId === "tw" ? "--tw-hover" : "--tw"));
+      twMesh.material[0].color.copy(tc); twMesh.material[1].color.copy(new THREE.Color(cssVar("--tw-edge")));
     }
     needsRender = true;
     placeBadges();
