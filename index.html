@@ -223,6 +223,8 @@ svg.map { width: 100%; height: auto; display: block; max-height: 80vh; }
       <button type="button" class="btn primary" id="open-add">新增品牌</button>
       <button type="button" class="btn" id="open-dup">檢查重複</button>
       <button type="button" class="btn" id="open-io">匯出／匯入</button>
+      <button type="button" class="btn danger" id="clear-all">清空資料</button>
+      <button type="button" class="btn" id="restore-all" hidden>還原預設資料</button>
     </div>
   </div>
 
@@ -348,6 +350,20 @@ const MULTI = [
   {n:"九州王和牛", w:"九州各縣", b:"黑毛和種", d:"日本 Ham 的品牌，選九州產黑毛和牛中肉質 4 等級以上、經日本 Ham 員工挑選的牛肉。產地不限單一縣。", prefs:KYUSHU}
 ];
 const PENDING = [];
+
+// ── 清空資料：預設清單是網站作者吃過的品牌，其他人可以清空後從零開始 ──
+const CLEAR_KEY = "wagyu-cleared";
+const BASE_BRANDS = BRANDS.slice(), BASE_MULTI = MULTI.slice();
+ALL.rows.forEach(r => { r.e0 = r.e; }); ALL.wide.forEach(w => { w.e0 = w.e; });
+let cleared = false;
+try { cleared = localStorage.getItem(CLEAR_KEY) === "1"; } catch(e) {}
+function applyBase(){
+  BRANDS.length = 0; MULTI.length = 0;
+  if (!cleared) { BRANDS.push(...BASE_BRANDS); MULTI.push(...BASE_MULTI); }
+  ALL.rows.forEach(r => { r.e = cleared ? "" : r.e0; });
+  ALL.wide.forEach(w => { w.e = cleared ? "" : w.e0; });
+}
+applyBase();
 
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const KEY = "wagyu-custom";
@@ -506,6 +522,13 @@ function inScope(regionIdx, id){
 }
 
 function renderEaten(list){
+  if (!BRANDS.length && !MULTI.length && !CUSTOM.length) {
+    const sec = document.createElement("section"); sec.className = "box";
+    sec.innerHTML = `<h2>開始建立你的和牛地圖</h2><p class="sub" style="margin:0">還沒有吃過的品牌。按「新增品牌」加入第一個，地圖會跟著上色；也可以切到「全日本品牌」看看各縣有哪些品牌。</p><div class="btn-row"><button type="button" class="btn primary" id="empty-add">新增第一個品牌</button></div>`;
+    list.append(sec);
+    sec.querySelector("#empty-add").onclick = () => openForm(null);
+    return;
+  }
   REGIONS.forEach(([r,ids],ri)=>{
     const pids = ids.filter(id => eatenCount[id] && inScope(ri,id));
     const showMulti = r.startsWith("九州") && (current===null || current==="r"+ri);
@@ -725,7 +748,36 @@ function renderDupes(){
 document.getElementById("open-dup").onclick = () => { closeForm(); ioBox.hidden = true; renderDupes(); const b = document.getElementById("dup-box"); b.hidden = false; b.scrollIntoView({block:"nearest"}); };
 document.getElementById("dup-close").onclick = () => { document.getElementById("dup-box").hidden = true; };
 
-function refresh(){ recount(); renderHeader(); paintMap(); renderToolbar(); render(); }
+const btnClear = document.getElementById("clear-all"), btnRestore = document.getElementById("restore-all");
+function syncClearButtons(){ btnRestore.hidden = !cleared; btnClear.hidden = cleared && !CUSTOM.length; }
+let clearTimer;
+btnClear.onclick = () => {
+  if (!btnClear.dataset.armed) {
+    btnClear.dataset.armed = "1"; btnClear.textContent = "確定清空？";
+    const parts = [];
+    if (!cleared) parts.push(`預設的 ${BASE_BRANDS.length + BASE_MULTI.length} 個吃過品牌`);
+    if (CUSTOM.length) parts.push(`你新增的 ${CUSTOM.length} 個品牌`);
+    showMsg(`再按一次「確定清空？」會清除${parts.join("和")}，地圖從零開始。` + (CUSTOM.length ? "你新增的品牌清除後無法還原，需要的話先用「匯出／匯入」備份。" : "之後可以按「還原預設資料」找回預設清單。"), true);
+    clearTimeout(clearTimer);
+    clearTimer = setTimeout(() => { delete btnClear.dataset.armed; btnClear.textContent = "清空資料"; }, 6000);
+    return;
+  }
+  clearTimeout(clearTimer); delete btnClear.dataset.armed; btnClear.textContent = "清空資料";
+  cleared = true; CUSTOM = [];
+  try { localStorage.setItem(CLEAR_KEY, "1"); } catch(e) {}
+  saveCustom(); applyBase();
+  closeForm(); ioBox.hidden = true; document.getElementById("dup-box").hidden = true;
+  mode = "eaten"; current = null; refresh();
+  showMsg("已清空。按「新增品牌」開始建立你自己的和牛地圖。");
+};
+btnRestore.onclick = () => {
+  cleared = false;
+  try { localStorage.removeItem(CLEAR_KEY); } catch(e) {}
+  applyBase(); current = null; refresh();
+  showMsg(`已還原預設的 ${BASE_BRANDS.length + BASE_MULTI.length} 個吃過品牌` + (CUSTOM.length ? `，你新增的 ${CUSTOM.length} 個品牌也保留著。` : "。"));
+};
+
+function refresh(){ syncClearButtons(); recount(); renderHeader(); paintMap(); renderToolbar(); render(); }
 
 function render(){
   const list=document.getElementById("list"); list.innerHTML="";
@@ -759,7 +811,7 @@ try { const t = localStorage.getItem(THEME_KEY); if (t === "light" || t === "dar
 applyTheme(theme);
 document.querySelectorAll(".theme button").forEach(b => b.onclick = () => { theme = b.dataset.t; applyTheme(theme); try { localStorage.setItem(THEME_KEY, theme); } catch(e) {} });
 
-renderHeader(); paintMap(); renderToolbar(); render();
+syncClearButtons(); renderHeader(); paintMap(); renderToolbar(); render();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
