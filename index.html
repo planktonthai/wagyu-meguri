@@ -6,6 +6,17 @@
 <meta name="description" content="貼上你吃過的和牛清單，自動對應日本 47 都道府縣，標在 3D 地圖上。">
 <meta property="og:title" content="我的和牛地圖">
 <meta property="og:description" content="貼上你吃過的和牛清單，自動對應日本 47 都道府縣，標在 3D 地圖上。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://planktonthai.github.io/wagyu-meguri/">
+<meta property="og:image" content="https://planktonthai.github.io/wagyu-meguri/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_TW">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#4f6642">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-title" content="和牛地圖">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%234f6642'/%3E%3Ctext x='16' y='21.5' font-size='15' text-anchor='middle' fill='%23f4f5f0' font-family='sans-serif'%3E%E7%89%9B%3C/text%3E%3C/svg%3E">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}</style>
 <title>我的和牛地圖</title>
@@ -195,6 +206,9 @@ svg.map { width: 100%; height: auto; display: block; max-height: 80vh; }
 @media (prefers-reduced-motion: reduce) { .pref { transition: none; } }
 </style>
 
+
+</head>
+<body>
 <style>
 .pv { display: flex; flex-direction: column; gap: 6px; max-height: 420px; overflow: auto; }
 .pv-sum { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); }
@@ -234,9 +248,6 @@ svg.map { width: 100%; height: auto; display: block; max-height: 80vh; }
 @keyframes eggIn { from { opacity: 0; transform: translate(-50%, -44%) scale(.96); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
 </style>
 
-
-</head>
-<body>
 <div class="wrap">
   <header>
     <div class="title-block">
@@ -357,7 +368,7 @@ svg.map { width: 100%; height: auto; display: block; max-height: 80vh; }
         <button type="button" class="egg-x" id="egg-close" aria-label="關閉">×</button>
         <h3 id="egg-title">你發現台灣了！！</h3>
         <p>在台灣買和牛我都去「食安集品」找傑哥買</p>
-        <a class="btn primary" href="https://twjipin.com/shop/40500/" target="_blank" rel="noopener">前往食安集品</a>
+        <a class="btn primary" href="https://twjipin.com/shop/40500/?utm_source=wagyu-meguri&amp;utm_medium=referral&amp;utm_campaign=taiwan-easter-egg" target="_blank" rel="noopener">前往食安集品</a>
       </div>
     </section>
 
@@ -384,44 +395,8 @@ const KYUSHU = [40,41,42,43,44,45,46];
 const TOHOKU = [2,3,4,5,6,7];
 
 // ── 品牌知識庫：名稱對得上時，卡片會顯示這段介紹 ──
-const KB = [
-  {n:"白老牛", p:1, w:"北海道 白老町", b:"黑毛和種", d:"道南白老町飼育的黑毛和牛，北海道歷史較久的品牌牛之一。"},
-  {n:"富良野牛", p:1, w:"北海道 富良野地區", b:"未確認品種", t:"unk", d:"富良野一帶的牛肉。當地有「ふらの和牛」「ふらの大地和牛」等品牌，可能是其中之一。"},
-  {n:"美瑛牛", p:1, w:"北海道 美瑛町", b:"黑毛和種", d:"官方名「びえい和牛」，美瑛町 Farms 千代田從小牛到肥育一貫生產，一個牧場一個品牌。"},
-  {n:"十勝牛", p:1, w:"北海道 十勝地區", b:"和牛", d:"十勝平原飼育的牛肉，最接近的品牌是「十勝和牛」。十勝是北海道最大的肉牛產區之一。"},
-  {n:"十勝若牛", p:1, w:"北海道 清水町", b:"乳用種", t:"alt", d:"清水町出產，以荷蘭乳牛短期肥育，紅肉多、油花少。不屬於和牛品種。"},
-  {n:"雪美和牛", p:1, w:"北海道 帶廣市", b:"黑毛和種", d:"官方名「雪美和牛・ゆたか」，帶廣市トヨニシファーム 2024 年 4 月推出的新品牌，油花標準 BMS 6 以上。"},
-    {n:"佐呂間和牛", p:1, w:"北海道 佐呂間町", b:"和牛", d:"官方名「サロマ和牛」，鄂霍次克海側佐呂間町出產。"},
-  {n:"並木和牛", p:2, w:"青森 八甲田山地區", b:"和牛", d:"青森縣八甲田山一帶飼育的和牛，山區夏季涼爽、冬季積雪深。"},
-  {n:"門崎丑牛", p:3, w:"岩手 一關市門崎", b:"黑毛和種", d:"官方名「いわて門崎丑」，一關市門崎地區的品牌牛，品牌名刻意用「丑」字。"},
-  {n:"仙台牛", p:4, w:"宮城縣", b:"黑毛和種", d:"宮城縣飼育，肉質須達 A5 或 B5 才能稱為仙台牛，門檻在品牌牛中屬最嚴之列。"},
-  {n:"米澤牛", p:6, w:"山形 米澤・置賜地區", b:"黑毛和種", d:"置賜地區飼育的黑毛和牛，常與松阪、神戶並列為日本三大和牛之一。"},
-  {n:"山形牛", p:6, w:"山形縣全域", b:"黑毛和種", d:"山形縣內飼育的黑毛和牛，畜牧歷史可追溯到明治時期。"},
-  {n:"鷹山牛", p:6, w:"山形 米澤市", b:"黑毛和種", d:"米澤市的頂級黑毛和牛品牌，名稱取自米澤藩名君上杉鷹山。"},
-  {n:"常陸牛", p:8, w:"茨城縣", b:"黑毛和種", d:"茨城縣指定生產者飼育的黑毛和牛，品牌名取自舊國名常陸。"},
-  {n:"高崎牛", p:10, w:"群馬 高崎市", b:"未確認品種", t:"unk", d:"高崎市周邊飼育的品牌牛。"},
-  {n:"信州牛", p:20, w:"長野縣", b:"未確認品種", t:"unk", d:"長野縣（舊國名信州）牛肉的統稱，縣認定品牌為「信州プレミアム牛肉」。"},
-  {n:"飛驒牛", p:21, w:"岐阜縣", b:"黑毛和種", d:"在岐阜縣飼育 14 個月以上、肉質 A3 以上才能稱飛驒牛，油花細緻。"},
-  {n:"鳳來牛", p:23, w:"愛知 新城市鳳來", b:"和牛", d:"愛知縣東部新城市鳳來地區的品牌牛。"},
-  {n:"近江牛", p:25, w:"滋賀縣", b:"黑毛和種", d:"有 400 年以上歷史，日本最古老的和牛品牌，江戶時代曾以味噌醃漬獻給將軍。"},
-  {n:"三田吉本牛", p:28, w:"兵庫 三田市", b:"未確認品種", t:"unk", d:"兵庫縣三田地區出產的牛肉，同縣有知名的「三田牛」。"},
-  {n:"六甲姬牛", p:28, w:"兵庫 六甲山周邊", b:"未確認品種", t:"unk", d:"兵庫縣六甲山一帶飼育的品牌牛。"},
-  {n:"神戶紅酒牛", p:28, w:"兵庫 神戶市", b:"和牛", d:"官方名「神戸ワインビーフ」，與神戶葡萄酒結合的神戶市在地品牌牛。"},
-  {n:"姬路和牛", p:28, w:"兵庫 姬路市", b:"和牛", d:"兵庫縣姬路一帶飼育的和牛。"},
-  {n:"東伯和牛", p:31, w:"鳥取 琴浦町（東伯）", b:"和牛", d:"鳥取縣中部東伯地區飼育的和牛，鳥取是和牛名血統「氣高系」的故鄉。"},
-  {n:"銀山牛", p:32, w:"島根縣", b:"黑毛和種", d:"推定為「銀山和牛」，由島根的農場直營，名稱讓人聯想到世界遺產石見銀山。"},
-  {n:"橄欖牛", p:37, w:"香川 小豆島・香川縣", b:"黑毛和種", d:"官方名「オリーブ牛」，肥育後期餵食橄欖榨油後的果渣，脂肪較清爽。"},
-  {n:"土佐赤牛", p:39, w:"高知縣", b:"褐毛和種", t:"alt", d:"官方名「土佐あかうし」，毛色紅褐，紅肉比例高、油花少，口感偏瘦。"},
-  {n:"熊本和牛", p:43, w:"熊本縣", b:"黑毛和種", d:"對應品牌「くまもと黒毛和牛」。熊本同時也是褐毛和種「あか牛」的主要產地。"},
-  {n:"F1 豐美牛", p:44, w:"大分縣", b:"交雜種", t:"alt", d:"官方名「おおいた豊美牛」。F1 是黑毛和牛與荷蘭乳牛交配的第一代，油花介於和牛與乳牛之間。"},
-  {n:"宮崎牛", p:45, w:"宮崎縣", b:"黑毛和種", d:"肉質 4 等級以上才能稱宮崎牛，曾在全國和牛能力共進會（和牛奧運）多次拿下總理大臣賞。"},
-  {n:"尾崎牛", p:45, w:"宮崎 宮崎市", b:"黑毛和種", d:"尾崎宗春一人飼育的個人品牌牛，以飼料與飼育天數講究聞名。"},
-  {n:"薩摩牛", p:46, w:"鹿兒島縣", b:"未確認品種", t:"unk", d:"鹿兒島縣（舊國名薩摩）出產的牛肉。鹿兒島是黑毛和牛飼養量最多的縣之一，代表品牌為「鹿児島黒牛」。"},
-  {n:"石垣牛", p:47, w:"沖繩 石垣島", b:"黑毛和種", d:"八重山諸島飼育的黑毛和牛，島上放牧環境溫暖。"}
-];
-const KB_WIDE = [
-  {n:"九州王和牛", w:"九州各縣", b:"黑毛和種", d:"日本 Ham 的品牌，選九州產黑毛和牛中肉質 4 等級以上、經日本 Ham 員工挑選的牛肉。產地不限單一縣。", area:"九州"}
-];
+const KB = [{"n": "白老牛", "p": 1, "w": "北海道 白老町", "b": "黑毛和種", "d": "道南白老町飼育的黑毛和牛，北海道歷史較久的品牌牛之一。"}, {"n": "富良野牛", "p": 1, "w": "北海道 富良野地區", "b": "未確認品種", "t": "unk", "d": "富良野一帶的牛肉。當地有「ふらの和牛」「ふらの大地和牛」等品牌，可能是其中之一。"}, {"n": "美瑛牛", "p": 1, "w": "北海道 美瑛町", "b": "黑毛和種", "d": "官方名「びえい和牛」，美瑛町 Farms 千代田從小牛到肥育一貫生產，一個牧場一個品牌。"}, {"n": "十勝牛", "p": 1, "w": "北海道 十勝地區", "b": "和牛", "d": "十勝平原飼育的牛肉，最接近的品牌是「十勝和牛」。十勝是北海道最大的肉牛產區之一。"}, {"n": "十勝若牛", "p": 1, "w": "北海道 清水町", "b": "乳用種", "t": "alt", "d": "清水町出產，以荷蘭乳牛短期肥育，紅肉多、油花少。不屬於和牛品種。"}, {"n": "雪美和牛", "p": 1, "w": "北海道 帶廣市", "b": "黑毛和種", "d": "官方名「雪美和牛・ゆたか」，帶廣市トヨニシファーム 2024 年 4 月推出的新品牌，油花標準 BMS 6 以上。"}, {"n": "佐呂間和牛", "p": 1, "w": "北海道 佐呂間町", "b": "和牛", "d": "官方名「サロマ和牛」，鄂霍次克海側佐呂間町出產。"}, {"n": "並木和牛", "p": 2, "w": "青森 八甲田山地區", "b": "和牛", "d": "青森縣八甲田山一帶飼育的和牛，山區夏季涼爽、冬季積雪深。"}, {"n": "門崎丑牛", "p": 3, "w": "岩手 一關市門崎", "b": "黑毛和種", "d": "官方名「いわて門崎丑」，一關市門崎地區的品牌牛，品牌名刻意用「丑」字。"}, {"n": "仙台牛", "p": 4, "w": "宮城縣", "b": "黑毛和種", "d": "宮城縣飼育，肉質須達 A5 或 B5 才能稱為仙台牛，門檻在品牌牛中屬最嚴之列。"}, {"n": "米澤牛", "p": 6, "w": "山形 米澤・置賜地區", "b": "黑毛和種", "d": "置賜地區飼育的黑毛和牛，常與松阪、神戶並列為日本三大和牛之一。"}, {"n": "山形牛", "p": 6, "w": "山形縣全域", "b": "黑毛和種", "d": "山形縣內飼育的黑毛和牛，畜牧歷史可追溯到明治時期。"}, {"n": "鷹山牛", "p": 6, "w": "山形 米澤市", "b": "黑毛和種", "d": "米澤市的頂級黑毛和牛品牌，名稱取自米澤藩名君上杉鷹山。"}, {"n": "常陸牛", "p": 8, "w": "茨城縣", "b": "黑毛和種", "d": "茨城縣指定生產者飼育的黑毛和牛，品牌名取自舊國名常陸。"}, {"n": "高崎牛", "p": 10, "w": "群馬 高崎市", "b": "未確認品種", "t": "unk", "d": "高崎市周邊飼育的品牌牛。"}, {"n": "信州牛", "p": 20, "w": "長野縣", "b": "未確認品種", "t": "unk", "d": "長野縣（舊國名信州）牛肉的統稱，縣認定品牌為「信州プレミアム牛肉」。"}, {"n": "飛驒牛", "p": 21, "w": "岐阜縣", "b": "黑毛和種", "d": "在岐阜縣飼育 14 個月以上、肉質 A3 以上才能稱飛驒牛，油花細緻。"}, {"n": "鳳來牛", "p": 23, "w": "愛知 新城市鳳來", "b": "和牛", "d": "愛知縣東部新城市鳳來地區的品牌牛。"}, {"n": "近江牛", "p": 25, "w": "滋賀縣", "b": "黑毛和種", "d": "有 400 年以上歷史，日本最古老的和牛品牌，江戶時代曾以味噌醃漬獻給將軍。"}, {"n": "三田吉本牛", "p": 28, "w": "兵庫 三田市", "b": "未確認品種", "t": "unk", "d": "兵庫縣三田地區出產的牛肉，同縣有知名的「三田牛」。"}, {"n": "六甲姬牛", "p": 28, "w": "兵庫 六甲山周邊", "b": "未確認品種", "t": "unk", "d": "兵庫縣六甲山一帶飼育的品牌牛。"}, {"n": "神戶紅酒牛", "p": 28, "w": "兵庫 神戶市", "b": "和牛", "d": "官方名「神戸ワインビーフ」，與神戶葡萄酒結合的神戶市在地品牌牛。"}, {"n": "姬路和牛", "p": 28, "w": "兵庫 姬路市", "b": "和牛", "d": "兵庫縣姬路一帶飼育的和牛。"}, {"n": "東伯和牛", "p": 31, "w": "鳥取 琴浦町（東伯）", "b": "和牛", "d": "鳥取縣中部東伯地區飼育的和牛，鳥取是和牛名血統「氣高系」的故鄉。"}, {"n": "銀山牛", "p": 32, "w": "島根縣", "b": "黑毛和種", "d": "推定為「銀山和牛」，由島根的農場直營，名稱讓人聯想到世界遺產石見銀山。"}, {"n": "橄欖牛", "p": 37, "w": "香川 小豆島・香川縣", "b": "黑毛和種", "d": "官方名「オリーブ牛」，肥育後期餵食橄欖榨油後的果渣，脂肪較清爽。"}, {"n": "土佐赤牛", "p": 39, "w": "高知縣", "b": "褐毛和種", "t": "alt", "d": "官方名「土佐あかうし」，毛色紅褐，紅肉比例高、油花少，口感偏瘦。"}, {"n": "熊本和牛", "p": 43, "w": "熊本縣", "b": "黑毛和種", "d": "對應品牌「くまもと黒毛和牛」。熊本同時也是褐毛和種「あか牛」的主要產地。"}, {"n": "F1 豐美牛", "p": 44, "w": "大分縣", "b": "交雜種", "t": "alt", "d": "官方名「おおいた豊美牛」。F1 是黑毛和牛與荷蘭乳牛交配的第一代，油花介於和牛與乳牛之間。"}, {"n": "宮崎牛", "p": 45, "w": "宮崎縣", "b": "黑毛和種", "d": "肉質 4 等級以上才能稱宮崎牛，曾在全國和牛能力共進會（和牛奧運）多次拿下總理大臣賞。"}, {"n": "尾崎牛", "p": 45, "w": "宮崎 宮崎市", "b": "黑毛和種", "d": "尾崎宗春一人飼育的個人品牌牛，以飼料與飼育天數講究聞名。"}, {"n": "薩摩牛", "p": 46, "w": "鹿兒島縣", "b": "未確認品種", "t": "unk", "d": "鹿兒島縣（舊國名薩摩）出產的牛肉。鹿兒島是黑毛和牛飼養量最多的縣之一，代表品牌為「鹿児島黒牛」。"}, {"n": "石垣牛", "p": 47, "w": "沖繩 石垣島", "b": "黑毛和種", "d": "八重山諸島飼育的黑毛和牛，島上放牧環境溫暖。"}];
+const KB_WIDE = [{"n": "九州王和牛", "w": "九州各縣", "b": "黑毛和種", "d": "日本 Ham 的品牌，選九州產黑毛和牛中肉質 4 等級以上、經日本 Ham 員工挑選的牛肉。產地不限單一縣。", "area": "九州"}];
 
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
@@ -1063,11 +1038,10 @@ document.querySelectorAll(".theme button").forEach(b => b.onclick = () => { them
 syncClearButtons(); renderHeader(); paintMap(); renderToolbar(); render();
 
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 // ── 3D 立體地圖（three.js）──
-(function(){
+// 由 loader.js 在需要 3D 時才載入 three.js，載好後呼叫 start3D()
+window.start3D = function(initialView){
   const card = document.querySelector(".map-card");
   const box = document.getElementById("map3d");
   const overlay = document.getElementById("map3d-overlay");
@@ -1075,8 +1049,7 @@ syncClearButtons(); renderHeader(); paintMap(); renderToolbar(); render();
   const btn2d = document.getElementById("view-2d"), btn3d = document.getElementById("view-3d"), btnReset = document.getElementById("view-reset");
   const hint = document.getElementById("map3d-hint");
   const VIEW_KEY = "wagyu-view";
-  let view = "3d";
-  try { const v = localStorage.getItem(VIEW_KEY); if (v === "2d" || v === "3d") view = v; } catch(e) {}
+  let view = initialView === "2d" ? "2d" : "3d";
 
   let ok = !!(window.THREE && THREE.OrbitControls);
   let renderer = null;
@@ -1524,9 +1497,71 @@ syncClearButtons(); renderHeader(); paintMap(); renderToolbar(); render();
   if (matchMedia("(pointer: coarse)").matches) hint.textContent = "單指拖曳移動・雙指縮放與旋轉・點縣市飛過去・指北針轉回正北";
   setView(view);
   if (!ok) { hint.hidden = false; hint.textContent = "這個瀏覽器無法顯示 3D 地圖，已改用平面地圖。"; }
+};
+
+</script>
+<script>
+// ── 3D 延後載入：預設 3D 時等頁面畫好再下載 three.js；預設 2D 時等使用者按下 3D 才下載 ──
+(function(){
+  const THREE_URL = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+  const ORBIT_URL = "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js";
+  const card = document.querySelector(".map-card");
+  const b2 = document.getElementById("view-2d"), b3 = document.getElementById("view-3d");
+  const hint = document.getElementById("map3d-hint"), zoom = document.getElementById("view-zoom");
+  let saved = null;
+  try { saved = localStorage.getItem("wagyu-view"); } catch(e) {}
+  // 手機且記憶體或核心數較少時，預設用平面地圖
+  const coarse = matchMedia("(pointer: coarse)").matches;
+  const lowEnd = coarse && ((navigator.deviceMemory && navigator.deviceMemory <= 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4));
+  const first = saved === "2d" || saved === "3d" ? saved : (lowEnd ? "2d" : "3d");
+
+  function show2d(){
+    card.classList.remove("is-3d");
+    b2.setAttribute("aria-pressed", "true"); b3.setAttribute("aria-pressed", "false");
+    zoom.hidden = true; hint.hidden = true;
+  }
+  function loadScript(src){
+    return new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.async = false; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+  }
+  let loading = null;
+  function load(){
+    if (loading) return loading;
+    b3.textContent = "載入中…"; b3.setAttribute("aria-busy", "true");
+    loading = loadScript(THREE_URL).then(() => loadScript(ORBIT_URL)).catch(() => {}).then(() => { b3.textContent = "3D"; b3.removeAttribute("aria-busy"); });
+    return loading;
+  }
+  let desired = first, started = false;
+  function go(){
+    load().then(() => {
+      if (started || !window.start3D) return;
+      if (!(window.THREE && THREE.OrbitControls)) {
+        // 下載失敗（例如離線且沒有快取）：先用平面地圖，連線後可以再按 3D
+        loading = null; show2d();
+        hint.hidden = false; hint.textContent = navigator.onLine ? "3D 地圖載入失敗，已改用平面地圖，可以再按一次 3D 重試。" : "目前離線，3D 地圖需要連線才能載入，已改用平面地圖。";
+        return;
+      }
+      started = true; window.start3D(desired);
+    });
+  }
+  // start3D 接手之前，先由這裡處理 2D／3D 按鈕
+  b2.onclick = () => { desired = "2d"; try { localStorage.setItem("wagyu-view", "2d"); } catch(e) {} show2d(); };
+  b3.onclick = () => { desired = "3d"; go(); };
+
+  show2d();
+  if (first === "3d") {
+    // 等瀏覽器有空再載入，不擋住第一次畫面
+    const later = window.requestIdleCallback || (fn => setTimeout(fn, 200));
+    later(go, { timeout: 1500 });
+  }
 })();
 
 </script>
+<script>
+// 註冊 service worker（只在 https 的正式網站與本機測試時）
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+}
 
+</script>
 </body>
 </html>

@@ -50,6 +50,7 @@
   - 右鍵或 Shift＋拖曳旋轉；指北針一鍵轉回正北
   - 點縣市或地區按鈕，鏡頭會平滑飛過去
 - **深淺色切換**：淺色、深色、跟隨系統
+- **加入主畫面**：手機瀏覽器選「加入主畫面」，就能像 App 一樣打開；離線也能看清單和平面地圖
 
 你的清單只存在自己的瀏覽器，不會上傳到任何地方。
 
@@ -57,10 +58,24 @@
 
 | 檔案 | 內容 |
 |---|---|
-| `index.html` | 整個網站（單一檔案，含地圖、品牌資料庫與介紹） |
+| `index.html` | 網站本體，由 `build.py` 組裝產生，**不要直接改** |
+| `sw.js` | 離線快取（service worker），由 `build.py` 產生 |
+| `manifest.webmanifest`、`icons/` | 加入主畫面用的名稱與圖示 |
+| `og.png` | 在 LINE、FB 分享網址時顯示的預覽圖 |
+| `src/` | 原始碼：`head.html`、`page-head.html`（樣式）、`body.html`、`app.js`、`map3d.js`、`loader.js`、`sw.js`、`sw-register.js` |
 | `data/japan-wagyu-brands.json` | 全日本品牌牛資料庫（縣代碼、品牌名、品種、備註） |
-| `data/example-my-wagyu.txt` | 匯入格式範例：34 個品牌的實際清單 |
-| `data/日本和牛品牌清單.xlsx` | 品牌清單的試算表版 |
+| `data/brand-notes.json`、`data/brand-notes-wide.json` | 品牌介紹，名稱對得上時顯示在卡片上 |
+| `data/paths.json`、`data/centroids.json` | 47 都道府縣的地圖形狀與圓章位置 |
+| `data/example-my-wagyu.txt` | 匯入格式範例 |
+| `data/日本和牛品牌清單.xlsx` | 品牌清單的試算表版，由 `tools/make_xlsx.py` 產生 |
+
+## 修改網站
+
+1. 改 `src/` 或 `data/` 裡的檔案。
+2. 執行 `python3 build.py`，會重新產生 `index.html` 和 `sw.js`。
+3. 提交並推送到 `main`，GitHub Pages 約 1～2 分鐘後更新。
+
+改了資料庫後，可以執行 `python3 tools/make_xlsx.py` 重新產生試算表（需要 `openpyxl`）。
 
 ## 資料來源
 
