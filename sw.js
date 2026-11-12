@@ -1,5 +1,5 @@
 // 和牛巡禮 service worker：可以加到主畫面、離線也能開
-const CACHE = "wagyu-meguri-14d8171a2f";
+const CACHE = "wagyu-meguri-d1bb780f34";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-180.png"];
 
 self.addEventListener("install", e => {

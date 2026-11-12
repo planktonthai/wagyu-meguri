@@ -21,6 +21,44 @@
 @media (max-width: 560px) { .pend { grid-template-columns: minmax(0, 1fr) auto; } .pend .nm { grid-column: 1 / -1; } }
 .cols2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
 .brand .from { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+/* 想吃 */
+:root { --wish: #d6e4cf; --star: #a87a1f; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --wish: #34452f; --star: #e2b85a; } }
+:root[data-theme="dark"] { --wish: #34452f; --star: #e2b85a; }
+.pref.wish { fill: var(--wish); }
+.ate.wish { background: transparent; color: var(--sage); border: 1px solid var(--sage); }
+.row.wished { background: color-mix(in srgb, var(--wish) 45%, transparent); }
+.row-act { display: inline-flex; gap: 6px; }
+.row-act .btn[aria-pressed="true"] { background: var(--sage-soft); border-color: var(--sage); }
+.stat b small { font-size: 15px; color: var(--muted); font-weight: 400; }
+#add-form.is-wish .eaten-only { display: none; }
+/* 個人欄位 */
+.brand .mine-meta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; color: var(--ink); }
+.stars { color: var(--star); letter-spacing: 1px; }
+/* 收集進度與成就 */
+.prog { gap: 12px; }
+.prog-item { display: flex; flex-direction: column; gap: 6px; }
+.prog-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 14px; }
+.prog-row b { font-variant-numeric: tabular-nums; }
+.bar { height: 8px; border-radius: 999px; background: var(--land); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--sage); border-radius: 999px; min-width: 2px; }
+.badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.bdg { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 10px; border: 1px dashed var(--card-edge); background: var(--paper); opacity: .72; }
+.bdg.done { opacity: 1; border-style: solid; border-color: var(--sage); }
+.bdg .mk { flex: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 17px; background: var(--land); color: var(--muted); }
+.bdg.done .mk { background: var(--sage); color: var(--sage-ink); }
+.bdg .tx { display: flex; flex-direction: column; min-width: 0; line-height: 1.35; }
+.bdg .tx b { font-size: 14px; }
+.bdg .tx small { font-size: 12px; color: var(--muted); }
+.bdg .tx .pg { color: var(--ink); font-variant-numeric: tabular-nums; }
+/* 分享 */
+.sh-img-wrap { display: flex; justify-content: center; }
+.sh-img { width: min(100%, 360px); aspect-ratio: 4 / 5; border-radius: 12px; border: 1px solid var(--card-edge); background: var(--land); object-fit: contain; }
+.view-banner { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; padding: 12px 16px; border-radius: 12px; background: var(--sage-soft); border: 1px solid var(--sage); }
+.view-banner > div:first-child { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.view-banner span { font-size: 13px; color: var(--muted); }
+body.viewing #open-import, body.viewing #open-add, body.viewing #open-dup, body.viewing #clear-all, body.viewing #load-sample, body.viewing #open-share,
+body.viewing .ops, body.viewing .row-act, body.viewing .pend button, body.viewing .pend select { display: none !important; }
 /* 彩蛋：台灣（淡黃色） */
 :root { --tw: #f2e3a6; --tw-hover: #e8cd6f; --tw-edge: #d8c27c; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --tw: #6e6233; --tw-hover: #9a8742; --tw-edge: #85773f; } }
@@ -40,7 +78,7 @@
 <div class="wrap">
   <header>
     <div class="title-block">
-      <h1>我的和牛地圖</h1>
+      <h1 id="page-title">我的和牛地圖</h1>
       <p class="sub" id="sub"></p>
     </div>
     <div class="head-right">
@@ -53,6 +91,11 @@
     </div>
   </header>
 
+  <div class="view-banner" id="view-banner" hidden>
+    <div><b id="vb-title"></b><span>你正在看朋友分享的地圖，只能看、不能改，也不會影響你自己的清單。</span></div>
+    <div class="btn-row"><button type="button" class="btn primary" id="vb-merge">存到我的清單</button><button type="button" class="btn" id="vb-exit">回到我的地圖</button></div>
+  </div>
+
   <div class="actions">
     <div class="modes" role="group" aria-label="顯示模式">
       <button type="button" id="mode-eaten" aria-pressed="true">我吃過的</button>
@@ -61,6 +104,7 @@
     <div class="btn-row">
       <button type="button" class="btn primary" id="open-import">匯入清單</button>
       <button type="button" class="btn" id="open-add">新增品牌</button>
+      <button type="button" class="btn" id="open-share">分享</button>
       <button type="button" class="btn" id="open-export">匯出清單</button>
       <button type="button" class="btn" id="open-dup">檢查重複</button>
       <button type="button" class="btn danger" id="clear-all">清空資料</button>
@@ -75,16 +119,18 @@
     <div class="cols2">
       <div class="field">
         <label for="im-text">貼上清單，一行一個縣；同縣多個品牌用「、」分開</label>
-        <textarea id="im-text" placeholder="北海道：白老牛、十勝和牛&#10;山形：米澤牛&#10;兵庫：神戶紅酒牛&#10;宮崎牛"></textarea>
+        <textarea id="im-text" placeholder="北海道：白老牛、十勝和牛&#10;山形：米澤牛｜日期 2026-04｜評分 5&#10;宮崎牛&#10;# 想吃&#10;三重：松阪牛"></textarea>
       </div>
       <div class="field">
         <label>格式說明</label>
-        <pre class="fmt">地區：品牌
+        <pre class="fmt">地區：品牌｜日期 …｜評分 …｜地點 …
 北海道：白老牛
-山形：米澤牛、山形牛
-九州：九州王和牛
-宮崎牛</pre>
-        <p class="sub" style="margin:4px 0 0;font-size:13px">冒號全形、半形都可以，也接受逗號或 Tab。地區寫「山形」「山形縣」「山形県」都可以；只寫品牌時，會用全日本品牌資料庫自動找出縣。</p>
+山形：米澤牛｜日期 2026-04-12｜評分 5｜地點 米澤牛亭
+山形：山形牛、鷹山牛
+宮崎牛
+# 想吃
+三重：松阪牛</pre>
+        <p class="sub" style="margin:4px 0 0;font-size:13px">冒號全形、半形都可以，也接受逗號或 Tab。地區寫「山形」「山形縣」「山形県」都可以；只寫品牌時，會用全日本品牌資料庫自動找出縣。品牌後面可以用「｜」接日期、評分（1～5）、地點、產地、品種、備註，都可以省略。「# 想吃」下面的品牌會放進想吃清單。</p>
       </div>
     </div>
     <div class="field"><label for="im-file">或上傳 .txt／.csv 檔（請存成 UTF-8）</label><input type="file" id="im-file" accept=".txt,.csv,text/plain,text/csv"></div>
@@ -104,6 +150,23 @@
     </div>
   </section>
 
+  <section class="box" id="share-box" hidden>
+    <h2>分享你的和牛地圖</h2>
+    <div class="fields"><div class="field"><label for="sh-name">你的名字（會顯示在分享的地圖和圖片上）</label><input id="sh-name" maxlength="20" placeholder="例如：小林"></div></div>
+    <div class="field wide"><label for="sh-link">分享連結：朋友打開就能看到你的地圖，也能一鍵存成自己的</label><input id="sh-link" readonly></div>
+    <div class="btn-row">
+      <button type="button" class="btn primary" id="sh-copy">複製連結</button>
+      <button type="button" class="btn" id="sh-native" hidden>分享連結到…</button>
+    </div>
+    <div class="sh-img-wrap"><img id="sh-img" class="sh-img" alt="和牛地圖分享圖片預覽"></div>
+    <div class="btn-row">
+      <button type="button" class="btn primary" id="sh-dl">下載圖片</button>
+      <button type="button" class="btn" id="sh-img-share" hidden>分享圖片到…</button>
+      <button type="button" class="btn" id="sh-close">關閉</button>
+    </div>
+    <p class="sub" style="margin:0;font-size:13px">連結和圖片裡包含你的整份清單，包括日期、評分和地點。</p>
+  </section>
+
   <section class="box" id="export-box" hidden>
     <h2>匯出你的清單</h2>
     <p class="sub" style="margin:0">格式和匯入相同，可以貼到另一台電腦或手機的「匯入清單」，也可以分享給朋友。</p>
@@ -118,8 +181,12 @@
   <form class="box" id="add-form" hidden novalidate>
     <h2 id="form-title">新增吃過的品牌</h2>
     <div class="fields">
+      <div class="field"><label for="f-status">狀態</label><select id="f-status"><option value="eaten">吃過</option><option value="wish">想吃</option></select></div>
       <div class="field"><label for="f-name">品牌名稱 <b>必填</b></label><input id="f-name" maxlength="40" placeholder="例如：前沢牛"></div>
       <div class="field"><label for="f-pref">都道府縣 <b>必填</b></label><select id="f-pref"></select></div>
+      <div class="field eaten-only"><label for="f-date">吃的日期</label><input id="f-date" maxlength="12" placeholder="例如：2026-04-12 或 2026-04" inputmode="numeric"></div>
+      <div class="field eaten-only"><label for="f-rating">評分</label><select id="f-rating"><option value="">不評分</option><option value="5">★★★★★ 5</option><option value="4">★★★★☆ 4</option><option value="3">★★★☆☆ 3</option><option value="2">★★☆☆☆ 2</option><option value="1">★☆☆☆☆ 1</option></select></div>
+      <div class="field eaten-only"><label for="f-place">吃的地點</label><input id="f-place" maxlength="40" placeholder="例如：米澤牛亭、食安集品"></div>
       <div class="field"><label for="f-city">產地城市</label><input id="f-city" maxlength="40" placeholder="例如：奧州市"></div>
       <div class="field"><label for="f-breed">品種</label><select id="f-breed">
         <option value="">不確定</option><option>黑毛和種</option><option>褐毛和種</option><option>日本短角種</option><option>無角和種</option><option>交雜種</option><option>乳用種</option><option>其他</option>

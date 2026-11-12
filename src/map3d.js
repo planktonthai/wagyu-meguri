@@ -237,7 +237,7 @@ window.start3D = function(initialView){
 
   function levelColor(id){
     const c = mode === "eaten" ? (eatenCount[id] || 0) : (allCount[id] || 0);
-    if (!c) return cssVar("--land");
+    if (!c) return mode === "eaten" && wishCount[id] ? cssVar("--wish") : cssVar("--land");
     const lv = mode === "eaten" ? levelEaten(c) : levelAll(c);
     return cssVar("--g" + lv);
   }
@@ -360,7 +360,7 @@ window.start3D = function(initialView){
       clearTimeout(clickTimer);
       // 等一下確認不是雙擊，再執行單擊（篩選＋飛過去）
       if (id === "tw") { clearTimeout(clickTimer); openEgg(); return; }
-      clickTimer = setTimeout(() => { if (id && (eatenCount[id] || (mode === "all" && allCount[id]))) focusPref(id); }, 260);
+      clickTimer = setTimeout(() => { if (id && (eatenCount[id] || wishCount[id] || (mode === "all" && allCount[id]))) focusPref(id); }, 260);
     });
     el.addEventListener("dblclick", e => { e.preventDefault(); clearTimeout(clickTimer); hideFirstHint(); zoomAt(e.clientX, e.clientY, 0.5, true); });
     el.addEventListener("contextmenu", e => e.preventDefault());
@@ -368,7 +368,7 @@ window.start3D = function(initialView){
       if (e.buttons) { tip.hidden = true; return; }
       const id = pick(e);
       if (id !== hoverId) { hoverId = id; recolor(); }
-      const has = id === "tw" || (id && (eatenCount[id] || (mode === "all" && allCount[id])));
+      const has = id === "tw" || (id && (eatenCount[id] || wishCount[id] || (mode === "all" && allCount[id])));
       el.style.cursor = has ? "pointer" : "grab";
       if (id && id !== "tw") {
         const r = box.getBoundingClientRect();
@@ -436,6 +436,7 @@ window.start3D = function(initialView){
   btn2d.onclick = () => setView("2d");
   btn3d.onclick = () => setView("3d");
   btnReset.onclick = () => resetView(true);
+  window.__resetView3D = () => { if (scene) resetView(true); };
   const fp2d = focusPref;
   focusPref = function(id){
     fp2d(id);
