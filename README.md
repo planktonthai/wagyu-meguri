@@ -1,6 +1,6 @@
 # 和牛巡禮 wagyu-meguri
 
-把你吃過的和牛品牌標在 3D 日本地圖上。貼上清單，網站會自動對應到日本 47 都道府縣；也收錄全日本 224 個品牌牛供參考。
+把你吃過的和牛品牌標在 3D 日本地圖上。貼上清單，網站會自動對應到日本 47 都道府縣；也收錄全日本 363 個品牌牛供參考，每個品牌附一句特色和資料來源連結。
 
 **網站：** https://planktonthai.github.io/wagyu-meguri/
 
@@ -57,6 +57,7 @@
 - **檢查重複**：找出清單裡寫法不同、其實是同一品牌的項目
 - **清空資料**：刪除整份清單，從零開始；清空後可以按「載入範例」
 - **兩種檢視**：「我吃過的」與「全日本品牌」，縣的顏色越深代表品牌越多
+- **標籤篩選**：在「全日本品牌」可以用標籤篩選，例如日本三大和牛、有等級門檻、單一牧場、島嶼，以及各品種；搜尋也會比對品牌特色
 - **3D／2D 地圖**
   - 拖曳移動、滾輪或雙指縮放（以游標位置為中心）、雙擊放大
   - 右鍵或 Shift＋拖曳旋轉；指北針一鍵轉回正北
@@ -75,11 +76,11 @@
 | `manifest.webmanifest`、`icons/` | 加入主畫面用的名稱與圖示 |
 | `og.png` | 在 LINE、FB 分享網址時顯示的預覽圖 |
 | `src/` | 原始碼：`head.html`、`page-head.html`（樣式）、`body.html`、`app.js`、`map3d.js`、`loader.js`、`sw.js`、`sw-register.js` |
-| `data/japan-wagyu-brands.json` | 全日本品牌牛資料庫（縣代碼、品牌名、品種、備註） |
+| `data/japan-wagyu-brands.json` | 全日本品牌牛資料庫（縣代碼、品牌名、品種、備註、一句特色 `d`、資料來源 `src`、標籤 `tags`） |
 | `data/brand-notes.json`、`data/brand-notes-wide.json` | 品牌介紹，名稱對得上時顯示在卡片上 |
 | `data/paths.json`、`data/centroids.json` | 47 都道府縣的地圖形狀與圓章位置 |
 | `data/example-my-wagyu.txt` | 匯入格式範例 |
-| `data/日本和牛品牌清單.xlsx` | 品牌清單的試算表版，由 `tools/make_xlsx.py` 產生 |
+| `data/日本和牛品牌清單.xlsx` | 品牌清單的試算表版，由 `tools/make_xlsx.py` 產生，含特色、標籤與資料來源連結欄 |
 
 ## 修改網站
 
@@ -93,8 +94,10 @@
 
 - [日本のブランド牛一覧（Wikipedia）](https://ja.wikipedia.org/wiki/%E6%97%A5%E6%9C%AC%E3%81%AE%E3%83%96%E3%83%A9%E3%83%B3%E3%83%89%E7%89%9B%E4%B8%80%E8%A6%A7)
 - [日本全国のブランド牛肉・銘柄牛一覧（brand-meat.com）](https://brand-meat.com/brand-beef-index/)
+- [肉名鑑（nikumeikan.jp）](https://nikumeikan.jp/)：品種與掛名的肉質等級門檻
+- [全国銘柄牛一覧（pulgogi.net）](https://www.pulgogi.net/sanchi.html)：品種註記
 - [和牛／銘柄牛 都道府県別一覧（penguin-toyu.net）](https://www.penguin-toyu.net/otoriyose/wagyu.html)
 - 縣界地圖：[dataofjapan/land](https://github.com/dataofjapan/land)，以 mapshaper 簡化
 - 3D 繪圖：[three.js](https://threejs.org/) r128
 
-日本實際的品牌牛超過本資料庫收錄的數量，品種只在來源寫明時標示。
+日本實際的品牌牛超過本資料庫收錄的數量，品種只在來源寫明時標示。每個品牌的「來源」連結指向描述最完整的一份（優先順序：肉名鑑 → brand-meat.com → pulgogi.net → Wikipedia）。部分品牌來源沒有描述，只顯示來源連結；pulgogi.net 的清單可能包含已停用的舊品牌。

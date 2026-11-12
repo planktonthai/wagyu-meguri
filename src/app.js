@@ -18,7 +18,7 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 
 // ── 中日文名稱比對：把寫法統一成同一個比對鍵 ──
 const VARIANT = {"澤":"沢","驒":"騨","姬":"姫","縣":"県","廣":"広","兒":"児","黑":"黒","豐":"豊","濱":"浜","戶":"戸","來":"来","國":"国","關":"関","會":"会","龜":"亀","藏":"蔵","櫻":"桜","德":"徳","奧":"奥","壹":"壱","氣":"気","讚":"讃","繩":"縄","絲":"糸","帶":"帯","萬":"万","髙":"高","嶋":"島","圓":"円","滿":"満","實":"実","鄉":"郷","丑":"牛","臺":"台","靜":"静","區":"区","岡":"岡"};
-const KANA_PLACE = [["かみふらの","上富良野"],["ふらの","富良野"],["びえい","美瑛"],["さろま","佐呂間"],["とかち","十勝"],["しらおい","白老"],["びらとり","平取"],["いわて","岩手"],["あおもり","青森"],["あきた","秋田"],["やまがた","山形"],["ふくしま","福島"],["とちぎ","栃木"],["いばらき","茨城"],["ぐんま","群馬"],["かずさ","上総"],["しずおか","静岡"],["みかわ","三河"],["あいち","愛知"],["みえ","三重"],["おうみ","近江"],["こうべ","神戸"],["たじま","但馬"],["さんだ","三田"],["ひめじ","姫路"],["とっとり","鳥取"],["しまね","島根"],["いずも","出雲"],["おかやま","岡山"],["ひろしま","広島"],["とくしま","徳島"],["さぬき","讃岐"],["とさ","土佐"],["くまもと","熊本"],["おおいた","大分"],["みやざき","宮崎"],["かごしま","鹿児島"],["おきなわ","沖縄"],["いしがき","石垣"],["にいがた","新潟"],["とやま","富山"],["のと","能登"],["わかさ","若狭"],["よこはま","横浜"],["はかた","博多"],["ながさき","長崎"],["ひたち","常陸"],["せんだい","仙台"],["まえざわ","前沢"],["よねざわ","米沢"],["ひだ","飛騨"],["まつさか","松阪"],["ほうらい","鳳来"],["とうはく","東伯"],["かどさき","門崎"],["さつま","薩摩"],["ろっこう","六甲"],["ようざん","鷹山"],["ぎんざん","銀山"],["ゆきみ","雪美"],["とよみ","豊美"],["ぶんご","豊後"],["おだ","小田"],["もとぶ","本部"]];
+const KANA_PLACE = [["かみふらの","上富良野"],["ふらの","富良野"],["びえい","美瑛"],["さろま","佐呂間"],["とかち","十勝"],["しらおい","白老"],["びらとり","平取"],["いわて","岩手"],["あおもり","青森"],["あきた","秋田"],["やまがた","山形"],["ふくしま","福島"],["とちぎ","栃木"],["いばらき","茨城"],["ぐんま","群馬"],["かずさ","上総"],["しずおか","静岡"],["みかわ","三河"],["あいち","愛知"],["みえ","三重"],["おうみ","近江"],["こうべ","神戸"],["たじま","但馬"],["さんだ","三田"],["ひめじ","姫路"],["とっとり","鳥取"],["しまね","島根"],["いずも","出雲"],["おかやま","岡山"],["ひろしま","広島"],["とくしま","徳島"],["さぬき","讃岐"],["とさ","土佐"],["くまもと","熊本"],["おおいた","大分"],["みやざき","宮崎"],["かごしま","鹿児島"],["おきなわ","沖縄"],["いしがき","石垣"],["にいがた","新潟"],["とやま","富山"],["のと","能登"],["わかさ","若狭"],["よこはま","横浜"],["はかた","博多"],["ながさき","長崎"],["ひたち","常陸"],["せんだい","仙台"],["まえざわ","前沢"],["よねざわ","米沢"],["ひだ","飛騨"],["まつさか","松阪"],["ほうらい","鳳来"],["とうはく","東伯"],["かどさき","門崎"],["さつま","薩摩"],["ろっこう","六甲"],["ようざん","鷹山"],["ぎんざん","銀山"],["ゆきみ","雪美"],["とよみ","豊美"],["ぶんご","豊後"],["おだ","小田"],["もとぶ","本部"],["あわじ","淡路"],["ささやま","篠山"],["ざおう","蔵王"],["しほろ","士幌"],["みやこ","宮古"],["やえやま","八重山"]];
 const MEANING = [["葡萄酒","わいん"],["紅酒","わいん"],["橄欖","おりーぶ"],["褐毛","あか"],["赤","あか"]];
 const PREF_JA = ["北海道","青森","岩手","宮城","秋田","山形","福島","茨城","栃木","群馬","埼玉","千葉","東京","神奈川","新潟","富山","石川","福井","山梨","長野","岐阜","静岡","愛知","三重","滋賀","京都","大阪","兵庫","奈良","和歌山","鳥取","島根","岡山","広島","山口","徳島","香川","愛媛","高知","福岡","佐賀","長崎","熊本","大分","宮崎","鹿児島","沖縄"];
 const SUFFIX = /(黒毛和牛|和牛肉|牛肉|和牛|わぎゅう|ぎゅう|うし|びーふ|牛|肉)$/;
@@ -455,7 +455,8 @@ function entryCard(e){
   a.innerHTML = `<h3>${esc(e.n)}</h3><span class="tag ${tagCls}">${esc(breed || "未標示品種")}</span><span class="where">${esc(where)}</span>`
     + (row && row.n !== e.n ? `<span class="from">資料庫名稱：${esc(row.n)}</span>` : "")
     + (mine || e.rating ? `<span class="mine-meta">${e.rating ? `<span class="stars" aria-label="評分 ${e.rating} 顆星">${stars(e.rating)}</span>` : ""}${mine ? `<span>${mine}</span>` : ""}</span>` : "")
-    + (kb ? `<p>${esc(kb.d)}</p>` : "")
+    + (kb ? `<p>${esc(kb.d)}</p>` : row && row.d ? `<p>${esc(row.d)}</p>` : "")
+    + (row && row.src ? `<span class="from"><a class="src" href="${esc(row.src)}" target="_blank" rel="noopener">資料來源</a>${(row.tags || []).map(t => ` <span class="tag tagx">${esc(t)}</span>`).join("")}</span>` : "")
     + (e.note ? `<span class="note">${esc(e.note)}</span>` : "")
     + `<div class="ops">${e.wide ? "" : `<button type="button" class="btn small" data-act="edit">編輯</button>`}<button type="button" class="btn small danger" data-act="del">刪除</button></div>`;
   const prefs = entryPrefs(e);
@@ -578,7 +579,10 @@ function rowEl(r, prefs){
   const tag = r.t ? `<span class="tag ${ALT_BREEDS.includes(r.t)?"alt":""}">${esc(r.t)}</span>` : `<span class="tag unk">未標示</span>`;
   const ate = r.e ? `<span class="ate">${r.e === true ? "吃過" : "吃過・" + esc(r.e)}</span>` : (r.w ? `<span class="ate wish">想吃</span>` : "");
   const act = r.p && !r.e && !r.extra ? `<span class="row-act"><button type="button" class="btn small" data-act="ate">＋吃過</button><button type="button" class="btn small" data-act="wish" aria-pressed="${!!r.w}">${r.w ? "取消想吃" : "想吃"}</button></span>` : "";
-  d.innerHTML = `<span class="nm">${esc(r.n)}</span><span class="meta">${ate}${tag}${act}</span>${r.m?`<span class="m">${r.w2?esc(r.w2)+"・":""}${esc(r.m)}</span>`:(r.w2?`<span class="m">${esc(r.w2)}</span>`:"")}`;
+  const chips = (r.tags || []).map(t => `<span class="tag tagx">${esc(t)}</span>`).join("");
+  const info = [r.w2, r.d, r.m].filter(Boolean).map(esc).join("・");
+  const src = r.src ? ` <a class="src" href="${esc(r.src)}" target="_blank" rel="noopener">來源</a>` : "";
+  d.innerHTML = `<span class="nm">${esc(r.n)}</span><span class="meta">${ate}${chips}${tag}${act}</span>${info || src ? `<span class="m">${info}${src}</span>` : ""}`;
   if (act) {
     d.querySelector('[data-act="ate"]').onclick = () => quickAdd(r, false);
     d.querySelector('[data-act="wish"]').onclick = () => quickAdd(r, true);
@@ -586,9 +590,23 @@ function rowEl(r, prefs){
   d.addEventListener("mouseenter",()=>hl(prefs,true)); d.addEventListener("mouseleave",()=>hl(prefs,false));
   return d;
 }
+const TAG_FILTERS = ["日本三大和牛", "有等級門檻", "單一牧場", "島嶼", "黑毛和種", "褐毛和種", "日本短角種", "無角和種", "交雜種", "乳用種"];
+let tagFilter = "";
+const hasTag = (r, t) => !t || (r.tags || []).includes(t) || r.t === t;
+function renderTagBar(list){
+  const bar = document.createElement("div"); bar.className = "tagbar"; bar.setAttribute("role", "group"); bar.setAttribute("aria-label", "依標籤篩選");
+  const all = ALL.rows.concat(ALL.wide);
+  bar.innerHTML = `<span class="focus-note">標籤</span>` + [""].concat(TAG_FILTERS).map(t => {
+    const n = t ? all.filter(r => hasTag(r, t)).length : all.length;
+    return `<button type="button" class="chip small" data-t="${esc(t)}" aria-pressed="${tagFilter === t}">${t || "全部"} ${n}</button>`;
+  }).join("");
+  bar.querySelectorAll("button").forEach(b => b.onclick = () => { tagFilter = b.dataset.t; render(); });
+  list.append(bar);
+}
 function renderAll(list){
+  renderTagBar(list);
   const q = query.trim().toLowerCase();
-  const match = r => !q || r.n.toLowerCase().includes(q) || (typeof r.e === "string" && r.e.toLowerCase().includes(q)) || (r.m && r.m.toLowerCase().includes(q)) || (q.length >= 2 && similarity(q, r.n) > 0);
+  const match = r => hasTag(r, tagFilter) && (!q || r.n.toLowerCase().includes(q) || (typeof r.e === "string" && r.e.toLowerCase().includes(q)) || (r.m && r.m.toLowerCase().includes(q)) || (q.length >= 2 && similarity(q, r.n) > 0) || (r.d && r.d.toLowerCase().includes(q)));
   let shown = 0;
   REGIONS.forEach(([r, ids], ri) => {
     const pids = ids.filter(id => inScope(ri, id));
@@ -602,7 +620,7 @@ function renderAll(list){
         .concat(wish.filter(e => !dbRowFor(e)).map(e => ({ p: id, n: e.n, t: e.b || "", w: true, extra: true, m: e.note || "" })));
       return [id, base.concat(extra).filter(match)];
     }).filter(([, rs]) => rs.length);
-    const wide = (current === null || current === "r" + ri) ? ALL.wide.filter(w => ((r === "東北" && w.w.startsWith("東北")) || (r.startsWith("九州") && w.w.startsWith("九州")))).map(w => { const e = placed().find(e => e.wide && similarity(e.n, w.n) === 2); return { n: w.n, t: w.t, m: w.m, w2: w.w, e: e ? (e.n === w.n ? true : e.n) : "" }; }).filter(match) : [];
+    const wide = (current === null || current === "r" + ri) ? ALL.wide.filter(w => ((r === "東北" && w.w.startsWith("東北")) || (r.startsWith("九州") && w.w.startsWith("九州")))).map(w => { const e = placed().find(e => e.wide && similarity(e.n, w.n) === 2); return { n: w.n, t: w.t, m: w.m, w2: w.w, d: w.d, src: w.src, e: e ? (e.n === w.n ? true : e.n) : "" }; }).filter(match) : [];
     if (!groups.length && !wide.length) return;
     const sec = document.createElement("section"); sec.className = "region";
     const n = groups.reduce((s, [, rs]) => s + rs.length, 0) + wide.length; shown += n;
@@ -624,7 +642,7 @@ function renderAll(list){
     }
     list.append(sec);
   });
-  if (!shown) { const p = document.createElement("p"); p.className = "empty"; p.textContent = q ? `找不到「${query}」，試試日文名稱或少打幾個字。` : "這個範圍沒有收錄品牌。"; list.append(p); }
+  if (!shown) { const p = document.createElement("p"); p.className = "empty"; p.textContent = q ? `找不到「${query}」，試試日文名稱或少打幾個字。` : tagFilter ? `這個範圍沒有「${tagFilter}」的品牌。` : "這個範圍沒有收錄品牌。"; list.append(p); }
 }
 
 let msgTimer;

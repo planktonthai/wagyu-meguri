@@ -21,6 +21,12 @@
 @media (max-width: 560px) { .pend { grid-template-columns: minmax(0, 1fr) auto; } .pend .nm { grid-column: 1 / -1; } }
 .cols2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
 .brand .from { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+/* 標籤與來源 */
+.tagbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chip.small { font-size: 12px; padding: 3px 10px; }
+.tag.tagx { background: transparent; border: 1px solid var(--g3); color: var(--ink); }
+a.src { color: var(--sage); text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
+a.src:focus-visible { outline: 2px solid var(--warm); outline-offset: 2px; }
 /* 想吃 */
 :root { --wish: #d6e4cf; --star: #a87a1f; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --wish: #34452f; --star: #e2b85a; } }
